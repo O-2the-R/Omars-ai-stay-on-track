@@ -1,0 +1,9 @@
+{
+  "name": "@stay-on-track/api",
+  "private": true,
+  "type": "module",
+  "description": "Backend: the app's rules. Runs on AWS Lambda from Phase 2.",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

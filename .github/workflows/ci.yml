@@ -1,0 +1,46 @@
+# CI: the robot that checks every change.
+# Runs on every pull request and every push to main.
+# If any step fails, GitHub shows a red X instead of a green check.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Format, lint, types, tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install packages (exact versions from package-lock.json)
+        run: npm ci
+
+      - name: Formatting is consistent
+        run: npm run format:check
+
+      - name: Lint finds no likely bugs
+        run: npm run lint
+
+      - name: Types line up
+        run: npm run typecheck
+
+      - name: Unit tests pass
+        run: npm test
